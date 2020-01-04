@@ -29,7 +29,7 @@ export default function Home({ navigation }) {
     const noteName = getNewNoteId();
 
     FileSystem.writeAsStringAsync(
-      `${FileSystem.documentDirectory}/${noteName}`,
+      `${FileSystem.documentDirectory}/${noteName}.md`,
       contentsToSave
     ).then(() => {
       Alert.alert("Saved");
@@ -52,6 +52,20 @@ export default function Home({ navigation }) {
       });
   }
 
+  function renderItem({ item, separators }) {
+    return (
+      <View style={styles.noteItem}>
+        <TouchableHighlight
+          onShowUnderlay={separators.highlight}
+          onHideUnderlay={separators.unhighlight}
+          onPress={() => handleOpenNote(item)}
+        >
+          <Text style={styles.noteText}>{item}</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
+
   React.useEffect(() => {
     populateNotesList();
   }, []);
@@ -64,17 +78,7 @@ export default function Home({ navigation }) {
         )}
         data={notes}
         keyExtractor={item => item}
-        renderItem={({ item, separators }) => (
-          <TouchableHighlight
-            onShowUnderlay={separators.highlight}
-            onHideUnderlay={separators.unhighlight}
-            onPress={() => handleOpenNote(item)}
-          >
-            <View style={{ backgroundColor: "white" }}>
-              <Text style={styles.noteItem}>{item}</Text>
-            </View>
-          </TouchableHighlight>
-        )}
+        renderItem={renderItem}
         onRefresh={populateNotesList}
         refreshing={isPopulatingNotes}
       />
@@ -89,12 +93,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "space-between"
   },
+  noteText: {
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    alignContent: "flex-start",
+    backgroundColor: "white"
+  },
   noteItem: {
-    paddingVertical: 8,
-    alignContent: "flex-start"
+    backgroundColor: "red",
+    width: "100%"
   },
   seperator: {
     backgroundColor: "red"
